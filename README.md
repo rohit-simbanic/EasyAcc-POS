@@ -35,27 +35,27 @@ The following diagram illustrates the hybrid/offline-first system architecture u
 
 ```mermaid
 graph TD
-    subgraph Client_Side [Local Client (Offline-First Desktop App)]
-        A[React UI - Electron Renderer] <-->|IPC Communication| B[Electron Main Process]
-        B <-->|Read/Write| C[(Local Database - RxDB / Nedb / Realm)]
-        B -->|Prints Bill| D[Thermal Printer / Barcode Scanner]
-        B -->|Sync Agent| E[Sync Client - Client-Side Sync Manager]
+    subgraph Client_Side ["Local Client (Offline-First Desktop App)"]
+        A["React UI - Electron Renderer"] <-->|IPC Communication| B["Electron Main Process"]
+        B <-->|Read/Write| C[("Local Database - RxDB / Nedb / Realm")]
+        B -->|Prints Bill| D["Thermal Printer / Barcode Scanner"]
+        B -->|Sync Agent| E["Sync Client - Client-Side Sync Manager"]
     end
 
-    subgraph Sync_Transport [Network Layer]
-        E <--->|HTTPS / WebSockets with Auth| F[Sync Gateway & Conflict Resolver]
+    subgraph Sync_Transport ["Network Layer"]
+        E <--->|HTTPS / WebSockets with Auth| F["Sync Gateway & Conflict Resolver"]
     end
 
-    subgraph Cloud_Infrastructure [Cloud Infrastructure (DigitalOcean)]
-        F <--> G[Node.js API Server - Express / NestJS]
-        G <-->|CRUD / Aggregate| H[(Cloud MongoDB - DigitalOcean Managed)]
-        G -->|Jobs / Queue| I[Redis Queue - Background Jobs]
+    subgraph Cloud_Infrastructure ["Cloud Infrastructure (DigitalOcean)"]
+        F <--> G["Node.js API Server - Express / NestJS"]
+        G <-->|CRUD / Aggregate| H[("Cloud MongoDB - DigitalOcean Managed")]
+        G -->|Jobs / Queue| I["Redis Queue - Background Jobs"]
     end
 
-    subgraph External_APIs [External Integration Services]
-        G <-->|Auth & Verification| J[GST GSP APIs - e-Invoice & e-Way Bill]
-        G -->|Payment Links| K[Payment Gateway - Razorpay UPI]
-        G -->|SMS/WhatsApp Bills| L[Communication APIs - WhatsApp/SMS]
+    subgraph External_APIs ["External Integration Services"]
+        G <-->|Auth & Verification| J["GST GSP APIs - e-Invoice & e-Way Bill"]
+        G -->|Payment Links| K["Payment Gateway - Razorpay UPI"]
+        G -->|SMS/WhatsApp Bills| L["Communication APIs - WhatsApp/SMS"]
     end
 ```
 
