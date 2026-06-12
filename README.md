@@ -31,33 +31,43 @@ EasyACC is designed to simplify and digitalize the daily operations of small and
 
 ## 🏛️ System Architecture
 
-The following diagram illustrates the hybrid/offline-first system architecture using **Electron + React** on the client side, a synchronization layer, and a **Node.js + MongoDB** backend hosted on **DigitalOcean**.
+The following diagram illustrates the core system components and their functional hierarchy:
 
 ```mermaid
 graph TD
-    subgraph Client_Side ["Local Client (Offline-First Desktop App)"]
-        A["React UI - Electron Renderer"] <-->|IPC Communication| B["Electron Main Process"]
-        B <-->|Read/Write| C[("Local Database - RxDB / Nedb / Realm")]
-        B -->|Prints Bill| D["Thermal Printer / Barcode Scanner"]
-        B -->|Sync Agent| E["Sync Client - Client-Side Sync Manager"]
-    end
+    Core["Core System"]
 
-    subgraph Sync_Transport ["Network Layer"]
-        E <--->|HTTPS / WebSockets with Auth| F["Sync Gateway & Conflict Resolver"]
-    end
+    %% First Level
+    Billing["Billing & Invoicing"]
+    Inventory["Inventory & Stock"]
+    GST["GST Compliance"]
+    Accounting["Accounting & Ledger"]
 
-    subgraph Cloud_Infrastructure ["Cloud Infrastructure (DigitalOcean)"]
-        F <--> G["Node.js API Server - Express / NestJS"]
-        G <-->|CRUD / Aggregate| H[("Cloud MongoDB - DigitalOcean Managed")]
-        G -->|Jobs / Queue| I["Redis Queue - Background Jobs"]
-    end
+    Core --> Billing
+    Core --> Inventory
+    Core --> GST
+    Core --> Accounting
 
-    subgraph External_APIs ["External Integration Services"]
-        G <-->|Auth & Verification| J["GST GSP APIs - e-Invoice & e-Way Bill"]
-        G -->|Payment Links| K["Payment Gateway - Razorpay UPI"]
-        G -->|SMS/WhatsApp Bills| L["Communication APIs - WhatsApp/SMS"]
-    end
+    %% Second Level
+    POS["POS & Thermal Print"]
+    UPI["UPI QR Code Integration"]
+    
+    Billing --> POS
+    Billing --> UPI
+
+    Batch["Batch/Expiry Tracking"]
+    Alerts["Low Stock Alerts"]
+
+    Inventory --> Batch
+    Inventory --> Alerts
+
+    EInvoice["E-Invoicing & E-Way Bills"]
+    GSTR["GSTR-1 & GSTR-3B JSON exports"]
+
+    GST --> EInvoice
+    GST --> GSTR
 ```
+
 
 ---
 
