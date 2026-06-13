@@ -193,51 +193,7 @@ To ensure the POS remains extremely fast even when handling tens of thousands of
 *   **Selective Zustand Memory Storage:** Avoided loading the entire database arrays (e.g. all lifetime invoices) in local JavaScript memory. Instead, the global store only loads current search matching pages.
 *   **On-Demand Local DB Queries:** Tab views like GSTR-1 (`Gstr1TaxTab.tsx`) and Khata Book (`CreditBookTab.tsx`) query filtered datasets directly from RxDB on demand instead of computing statistics from massive in-memory arrays.
 *   **DOM Node Reduction (Component Decoupling):** Decomposed `Billing.tsx` into modular components. Visual state edits (e.g. cart adjustments, form inputs) are scoped locally to avoid triggers of parent-level component re-renders.
-*   **Visual Pagination Footers:** Tables for Inventory and Invoices use paginated footers rendering up to 10 rows at a time, preventing rendering bottlenecks in the React virtual DOM.
-
----
-
-## 📂 Key MongoDB Schema Guidelines (Mongoose Models)
-
-
-### Invoices Collection Schema
-```javascript
-const InvoiceSchema = new mongoose.Schema({
-  invoiceId: { type: String, required: true, unique: true }, // Client-side generated UUID
-  invoiceNumber: { type: String, required: true },
-  date: { type: Date, required: true },
-  customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer' },
-  customerName: { type: String, required: true },
-  customerGSTIN: { type: String },
-  billingStateCode: { type: String, required: true },
-  items: [{
-    productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
-    name: { type: String, required: true },
-    hsnCode: { type: String, required: true },
-    quantity: { type: Number, required: true },
-    unitPrice: { type: mongoose.Types.Decimal128, required: true },
-    taxableValue: { type: mongoose.Types.Decimal128, required: true },
-    gstRate: { type: Number, required: true },
-    cgst: { type: mongoose.Types.Decimal128, default: 0 },
-    sgst: { type: mongoose.Types.Decimal128, default: 0 },
-    igst: { type: mongoose.Types.Decimal128, default: 0 }
-  }],
-  totals: {
-    taxableAmount: { type: mongoose.Types.Decimal128, required: true },
-    totalCGST: { type: mongoose.Types.Decimal128, default: 0 },
-    totalSGST: { type: mongoose.Types.Decimal128, default: 0 },
-    totalIGST: { type: mongoose.Types.Decimal128, default: 0 },
-    grandTotal: { type: mongoose.Types.Decimal128, required: true }
-  },
-  paymentStatus: { type: String, enum: ['Paid', 'Unpaid', 'Partial'], default: 'Unpaid' },
-  syncStatus: { type: String, enum: ['pending', 'synced', 'failed'], default: 'pending' },
-  updatedAt: { type: Date, default: Date.now }
-});
-```
-
----
-
-## ⚙️ Desktop App Setup (.exe Guide) | ডেক্সটপ অ্যাপ সেটআপ (.exe গাইড)
+*   **Visual Pagination Footers:** Tables for Inventory and Invoices use paginated footers rendering up to 10 rows at a time, preventing rendering bottlenecks in the React virtua## ⚙️ Desktop App Setup (.exe Guide) | ডেক্সটপ অ্যাপ সেটআপ (.exe গাইড)
 
 This guide explains how to install and configure the EasyACC desktop billing application from the setup `.exe` file.
 এই গাইডটি কিভাবে সেটআপ `.exe` ফাইল থেকে EasyACC ডেক্সটপ বিলিং অ্যাপ্লিকেশন ইনস্টল এবং কনফিগার করবেন তা ব্যাখ্যা করে।
@@ -252,12 +208,41 @@ This guide explains how to install and configure the EasyACC desktop billing app
 
 ### ⚙️ Step-by-Step Installation / ধাপে ধাপে ইনস্টলেশন প্রক্রিয়া
 
-| Step (English) | ধাপ (বাংলা) |
+| Step (English) |  (বাংলা) |
 | :--- | :--- |
 | **Step 1: Locate the Installer**<br>Navigate to the project build folder `desktop-client/dist/` and locate the file named `easyacc-desktop Setup 1.0.0.exe`. | **ধাপ ১: ইনস্টলারটি খুঁজুন**<br>প্রোজেক্টের বিল্ড ফোল্ডার `desktop-client/dist/`-এ যান এবং `easyacc-desktop Setup 1.0.0.exe` নামের ফাইলটি খুঁজুন। |
 | **Step 2: Run the Setup File**<br>Double-click the `.exe` file to start the installation. | **ধাপ ২: সেটআপ ফাইলটি রান করুন**<br>ইনস্টলেশন শুরু করতে `.exe` ফাইলটিতে ডাবল-ক্লিক করুন। |
-| **Step 3: SmartScreen Warning (If shown)**<br>Since this is a custom local build (unsigned package), Windows SmartScreen might block it.<br>1. Click **"More Info"**.<br>2. Click **"Run anyway"**. | **ধাপ ৩: スマートスクリーン warning (যদি দেখায়)**<br>যেহেতু এটি একটি কাস্টম লোকাল বিল্ড (স্বাক্ষরবিহীন প্যাকেজ), উইন্ডোজ স্মার্টস্ক্রিন এটি ব্লক করতে পারে।<br>১. **"More Info"**-এ ক্লিক করুন।<br>২. **"Run anyway"**-এ ক্লিক করুন। |
+| **Step 3: SmartScreen Warning (If shown)**<br>Since this is a custom local build (unsigned package), Windows SmartScreen might block it.<br>1. Click **"More Info"**.<br>2. Click **"Run anyway"**. | **ধাপ ৩: স্মার্টস্ক্রিন সতর্কতা (যদি দেখায়)**<br>যেহেতু এটি একটি কাস্টম লোকাল বিল্ড (স্বাক্ষরবিহীন প্যাকেজ), উইন্ডোজ স্মার্টস্ক্রিন এটি ব্লক করতে পারে।<br>১. **"More Info"**-এ ক্লিক করুন।<br>২. **"Run anyway"**-এ ক্লিক করুন। |
 | **Step 4: Installation Complete**<br>The setup installer runs in one-click mode. It will install the application files, place a shortcut icon named **EasyACC** on your Desktop, and launch the application automatically. | **ধাপ ৪: ইনস্টলেশন সম্পন্ন**<br>সেটআপ ইনস্টলারটি ওয়ান-ক্লিক মোডে চলে। এটি অ্যাপের ফাইলগুলো ইনস্টল করবে, আপনার ডেক্সটপে **EasyACC** নামে একটি শর্টকাট আইকন তৈরি করবে এবং স্বয়ংক্রিয়ভাবে অ্যাপটি চালু করবে। |
+
+### 🌐 Phase 1: Set up Your Private Backup Server / 1. নিজস্ব ব্যাকআপ সার্ভার চালু করা
+
+| English | বাংলা |
+| :--- | :--- |
+| **What is a Backend Server?**<br>Think of the backend as a secure digital filing cabinet in the cloud. It receives and stores all sales invoices and inventory updates from your offline billing terminals. | **ব্যাকএন্ড সার্ভার কী?**<br>ব্যাকএন্ডকে ক্লাউডের একটি নিরাপদ ডিজিটাল ফাইলিং ক্যাবিনেট বা আলমারি হিসেবে চিন্তা করুন। এটি আপনার অফলাইন বিলিং টার্মিনাল থেকে সমস্ত বিক্রয় চালান এবং ইনভেন্টরি আপডেট গ্রহণ করে সংরক্ষণ করে। |
+| **How to set it up:**<br>1. Purchase a Virtual Private Server (VPS) from providers like AWS, DigitalOcean, or set up a main host computer on your office Local Network (LAN).<br>2. Upload the `backend` folder to this server.<br>3. Install **Node.js** and **MongoDB** (the database engine) on the server.<br>4. Start the server (Nginx should reverse-proxy traffic to port `5005` so it can be reached via a standard URL or IP). | **কীভাবে এটি সেটআপ করবেন:**<br>১. AWS, DigitalOcean বা অন্য কোনো প্রোভাইডার থেকে একটি ভার্চুয়াল প্রাইভেট সার্ভার (VPS) কিনুন, অথবা আপনার অফিসের লোকাল নেটওয়ার্কের (LAN) একটি মেইন কম্পিউটার নির্ধারণ করুন।<br>২. এই সার্ভারে `backend` ফোল্ডারটি আপলোড করুন।<br>৩. সার্ভারে **Node.js** and **MongoDB** (ডাটাবেস ইঞ্জিন) ইনস্টল করুন।<br>৪. সার্ভারটি স্টার্ট করুন (Nginx কনফিগারেশন সেট করুন যেন এটি আইপি বা ডোমেইনের মাধ্যমে কানেক্ট হতে পারে)। |
+
+### 🔗 Phase 2: Link the Desktop App to Your Server / 2. ডেক্সটপ অ্যাপের সাথে সার্ভার লিংক করা
+
+| English | বাংলা |
+| :--- | :--- |
+| Now, tell your desktop application where your cloud server is located:<br><br>1. Open the project folder on your computer.<br>2. Open the **`desktop-client`** folder.<br>3. Find or create a file named **`.env`** (you can open this in Notepad).<br>4. Type the following line, replacing the IP with your server's IP address:<br>`REACT_APP_BACKEND_URL=http://YOUR_SERVER_IP` | এখন, আপনার ডেক্সটপ অ্যাপ্লিকেশনটিকে বলুন আপনার ক্লাউড সার্ভারটি কোথায় অবস্থিত:<br><br>১. আপনার কম্পিউটারে প্রোজেক্ট ফোল্ডারটি ওপেন করুন।<br>২. **`desktop-client`** ফোল্ডারে যান।<br>৩. **`.env`** নামের ফাইলটি খুঁজুন বা তৈরি করুন (এটি নোটপ্যাডে ওপেন করতে পারেন)।<br>৪. নিচের লাইনটি লিখুন এবং আপনার সার্ভারের আইপি দিয়ে রিপ্লেস করুন:<br>`REACT_APP_BACKEND_URL=http://YOUR_SERVER_IP` |
+
+### 🔨 Phase 3: Build Your Custom Installer (.exe) / 3. আপনার নিজস্ব ইনস্টলার (.exe) তৈরি করা
+
+| English | বাংলা |
+| :--- | :--- |
+| To generate the final installer `.exe` containing your new server link, open your VS Code terminal (or Command Prompt) and run these 3 simple commands step-by-step: | আপনার নতুন সার্ভারের লিঙ্কসহ চূড়ান্ত ইনস্টলার `.exe` তৈরি করতে, আপনার ভিএস কোড টার্মিনাল (বা কমান্ড প্রম্পট) ওপেন করুন এবং ধাপে ধাপে এই ৩টি সহজ কমান্ড রান করুন: |
+| **Step A: Enter the client directory**<br>```bash<br>cd desktop-client<br>``` | **ধাপ ক: ক্লায়েন্ট ডিরেক্টরিতে প্রবেশ করুন**<br>```bash<br>cd desktop-client<br>``` |
+| **Step B: Package the web files**<br>```bash<br>npm run react-build<br>```<br>*This prepares the React user interface to load with relative local paths.* | **ধাপ খ: ওয়েব ফাইলগুলো প্যাকেজ করুন**<br>```bash<br>npm run react-build<br>```<br>*এটি রিঅ্যাক্ট ইউজার ইন্টারফেস ফাইলগুলোকে লোকাল পাথে লোড হওয়ার জন্য প্রস্তুত করবে।* |
+| **Step C: Generate the installer**<br>```bash<br>npx electron-builder<br>```<br>*This bundles everything into a single `.exe` file.* | **ধাপ গ: ইনস্টলার তৈরি করুন**<br>```bash<br>npx electron-builder<br>```<br>*এটি সবকিছুকে একটি একক `.exe` ফাইলে প্যাকেজ করবে।* |
+| **Result:**<br>Open the newly created **`dist`** folder inside `desktop-client` and run the setup file named **`easyacc-desktop Setup 1.0.0.exe`** to install your custom billing system. | **ফলাফল:**<br>`desktop-client` এর ভেতরে নতুন তৈরি হওয়া **`dist`** ফোল্ডারটি ওপেন করুন এবং আপনার কাস্টম বিলিং সিস্টেম ইনস্টল করতে **`easyacc-desktop Setup 1.0.0.exe`** সেটআপ ফাইলটি রান করুন। |
+
+### 🖨️ Thermal Printer & Scanner Config / থার্মাল প্রিন্টার ও স্ক্যানার কনফিগারেশন
+
+| English | বাংলা |
+| :--- | :--- |
+| **Barcode Scanner:** Any standard USB barcode scanner works plug-and-play. Connect the scanner to a USB port, click on the POS search bar, and scan a barcode.<br><br>**Thermal Receipt Printer:** Connect your printer via USB. Ensure the printer driver is installed in Windows, and set it as the default printer to enable one-click silent receipt printing. | **বারকোড স্ক্যানার:** যেকোনো স্ট্যান্ডার্ড ইউএসবি বারকোড স্ক্যানার প্লাগ-অ্যান্ড-প্লে হিসেবে কাজ করে। স্ক্যানারটি ইউএসবি পোর্টে কানেক্ট করুন, পিওএস সার্চ বারে ক্লিক করুন এবং বারকোড স্ক্যান করুন।<br><br>**থার্মাল রিসিপ্ট প্রিন্টার:** ইউএসবি-র মাধ্যমে আপনার প্রিন্টার কানেক্ট করুন। উইন্ডোজে প্রিন্টার ড্রাইভার ইনস্টল করা আছে তা নিশ্চিত করুন, এবং ওয়ান-ক্লিক সাইলেন্ট প্রিন্ট সক্রিয় করতে এটিকে ডিফল্ট প্রিন্টার হিসেবে সেট করুন। |
 
 ### 📡 Configuring Cloud Sync / ক্লাউড সিঙ্ক কনফিগারেশন
 
