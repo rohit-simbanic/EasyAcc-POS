@@ -244,17 +244,6 @@ This guide explains how to install and configure the EasyACC desktop billing app
 | :--- | :--- |
 | **Barcode Scanner:** Any standard USB barcode scanner works plug-and-play. Connect the scanner to a USB port, click on the POS search bar, and scan a barcode.<br><br>**Thermal Receipt Printer:** Connect your printer via USB. Ensure the printer driver is installed in Windows, and set it as the default printer to enable one-click silent receipt printing. | **বারকোড স্ক্যানার:** যেকোনো স্ট্যান্ডার্ড ইউএসবি বারকোড স্ক্যানার প্লাগ-অ্যান্ড-প্লে হিসেবে কাজ করে। স্ক্যানারটি ইউএসবি পোর্টে কানেক্ট করুন, পিওএস সার্চ বারে ক্লিক করুন এবং বারকোড স্ক্যান করুন।<br><br>**থার্মাল রিসিপ্ট প্রিন্টার:** ইউএসবি-র মাধ্যমে আপনার প্রিন্টার কানেক্ট করুন। উইন্ডোজে প্রিন্টার ড্রাইভার ইনস্টল করা আছে তা নিশ্চিত করুন, এবং ওয়ান-ক্লিক সাইলেন্ট প্রিন্ট সক্রিয় করতে এটিকে ডিফল্ট প্রিন্টার হিসেবে সেট করুন। |
 
-### 📡 Configuring Cloud Sync / ক্লাউড সিঙ্ক কনফিগারেশন
-
-| English | বাংলা |
-| :--- | :--- |
-| By default, the application runs entirely offline. To connect it to your hosted VPS cloud backend:<br><br>1. Set your backend domain or VPS IP address in the environment settings.<br>2. When internet connectivity is active, local sales invoice data will automatically synchronize to your cloud MongoDB server. | ডিফল্টরূপে, অ্যাপ্লিকেশনটি সম্পূর্ণ অফলাইনে চলে। আপনার হোস্টেড ভিপিএস (VPS) ক্লাউড ব্যাকএন্ডের সাথে এটিকে সংযুক্ত করতে:<br><br>১. এনভায়রনমেন্ট সেটিংসে আপনার ব্যাকএন্ড ডোমেন বা ভিপিএস আইপি অ্যাড্রেস সেট করুন।<br>২. ইন্টারনেট সংযোগ চালু হলে, স্থানীয় বিক্রয় চালানের ডেটা স্বয়ংক্রিয়ভাবে আপনার ক্লাউড MongoDB সার্ভারে সিঙ্ক হবে। |
-
-### 🖨️ Thermal Printer & Scanner Config / থার্মাল প্রিন্টার ও স্ক্যানার কনফিগারেশন
-
-| English | বাংলা |
-| :--- | :--- |
-| **Barcode Scanner:** Any standard USB barcode scanner works plug-and-play. Connect the scanner to a USB port, click on the POS search bar, and scan a barcode.<br><br>**Thermal Receipt Printer:** Connect your printer via USB. Ensure the printer driver is installed in Windows, and set it as the default printer to enable one-click silent receipt printing. | **বারকোড স্ক্যানার:** যেকোনো স্ট্যান্ডার্ড ইউএসবি বারকোড স্ক্যানার প্লাগ-অ্যান্ড-প্লে হিসেবে কাজ করে। স্ক্যানারটি ইউএসবি পোর্টে কানেক্ট করুন, পিওএস সার্চ বারে ক্লিক করুন এবং বারকোড স্ক্যান করুন।<br><br>**থার্মাল রিসিপ্ট প্রিন্টার:** ইউএসবি-র মাধ্যমে আপনার প্রিন্টার কানেক্ট করুন। উইন্ডোজে প্রিন্টার ড্রাইভার ইনস্টল করা আছে তা নিশ্চিত করুন, এবং ওয়ান-ক্লিক সাইলেন্ট প্রিন্ট সক্রিয় করতে এটিকে ডিফল্ট প্রিন্টার হিসেবে সেট করুন। |
 
 ---
 
