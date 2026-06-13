@@ -50,7 +50,6 @@ const ProductSchema: Schema = new Schema({
 });
 
 ProductSchema.index({ name: 1 });
-ProductSchema.index({ sku: 1 });
 ProductSchema.index({ hsnCode: 1 });
 ProductSchema.index({ updatedAt: -1 });
 
