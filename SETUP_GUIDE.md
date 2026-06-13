@@ -26,13 +26,6 @@ This guide explains how to install and configure the EasyACC desktop billing app
 
 ---
 
-## 📡 Configuring Cloud Sync / ক্লাউড সিঙ্ক কনফিগারেশন
-
-| English | বাংলা |
-| :--- | :--- |
-| By default, the application runs entirely offline. To connect it to your hosted VPS cloud backend:<br><br>1. Set your backend domain or VPS IP address in the environment settings.<br>2. When internet connectivity is active, local sales invoice data will automatically synchronize to your cloud MongoDB server. | ডিফল্টরূপে, অ্যাপ্লিকেশনটি সম্পূর্ণ অফলাইনে চলে। আপনার হোস্টেড ভিপিএস (VPS) ক্লাউড ব্যাকএন্ডের সাথে এটিকে সংযুক্ত করতে:<br><br>১. এনভায়রনমেন্ট সেটিংসে আপনার ব্যাকএন্ড ডোমেন বা ভিপিএস আইপি অ্যাড্রেস সেট করুন।<br>২. ইন্টারনেট সংযোগ চালু হলে, স্থানীয় বিক্রয় চালানের ডেটা স্বয়ংক্রিয়ভাবে আপনার ক্লাউড MongoDB সার্ভারে সিঙ্ক হবে। |
-
----
 
 ## 🖨️ Thermal Printer & Scanner Config / থার্মাল প্রিন্টার ও স্ক্যানার কনফিগারেশন
 
