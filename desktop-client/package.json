@@ -1,6 +1,7 @@
 {
   "name": "easyacc-desktop",
   "version": "1.0.0",
+  "homepage": ".",
   "description": "EasyACC Desktop Billing Client",
   "main": "main.js",
   "scripts": {
@@ -51,5 +52,17 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "build": {
+    "extends": null,
+    "files": [
+      "build/**/*",
+      "main.js",
+      "preload.js",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis"
+    }
   }
 }

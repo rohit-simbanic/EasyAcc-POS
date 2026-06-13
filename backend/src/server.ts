@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import mongoose from 'mongoose';
 import http from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
@@ -36,7 +37,13 @@ app.use(express.json());
 
 // Health Check Endpoint
 app.get('/api/health', (req: Request, res: Response) => {
-  res.json({ status: 'ok', timestamp: new Date() });
+  const dbState = mongoose.connection.readyState;
+  const dbStatus = dbState === 1 ? 'connected' : dbState === 2 ? 'connecting' : 'disconnected';
+  res.json({ 
+    status: 'ok', 
+    database: dbStatus, 
+    timestamp: new Date() 
+  });
 });
 
 // REST API Routes
