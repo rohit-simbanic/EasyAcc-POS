@@ -3,13 +3,73 @@ import {
   Search, ShoppingCart, Trash2, User, Landmark, Printer, Camera, Database
 } from 'lucide-react';
 import { useStore } from '../../store/useStore';
-import { Product, Invoice } from '../../types';
+import { Product, Invoice, CartItem } from '../../types';
 import { MERCHANT_STATE_CODE } from './constants';
 import { handleReprint } from './printUtils';
 import { CameraScannerModal } from './modals/CameraScannerModal';
 import { QuickAddProductModal } from './modals/QuickAddProductModal';
 import { UpiPaymentModal } from './modals/UpiPaymentModal';
 import { CheckoutSuccessModal } from './modals/CheckoutSuccessModal';
+
+const CartQuantityInput: React.FC<{
+  item: CartItem;
+  updateQuantity: (id: string, qty: number) => void;
+  addToast: (msg: string, type: 'success' | 'error' | 'info') => void;
+}> = ({ item, updateQuantity, addToast }) => {
+  const [inputValue, setInputValue] = useState<string>(item.quantity.toString());
+
+  useEffect(() => {
+    setInputValue(item.quantity.toString());
+  }, [item.quantity]);
+
+  const handleBlur = () => {
+    const parsed = parseInt(inputValue, 10);
+    if (isNaN(parsed) || parsed <= 0) {
+      updateQuantity(item._id, 0);
+    } else if (parsed > item.stock.quantity) {
+      addToast(`Cannot exceed available stock of ${item.stock.quantity} units for ${item.name}`, 'error');
+      updateQuantity(item._id, item.stock.quantity);
+      setInputValue(item.stock.quantity.toString());
+    } else {
+      updateQuantity(item._id, parsed);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const valStr = e.target.value;
+    setInputValue(valStr);
+
+    const parsed = parseInt(valStr, 10);
+    if (!isNaN(parsed) && parsed > 0) {
+      if (parsed > item.stock.quantity) {
+        addToast(`Cannot exceed available stock of ${item.stock.quantity} units for ${item.name}`, 'error');
+        updateQuantity(item._id, item.stock.quantity);
+        setInputValue(item.stock.quantity.toString());
+      } else {
+        updateQuantity(item._id, parsed);
+      }
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      (e.target as HTMLInputElement).blur();
+    }
+  };
+
+  return (
+    <input
+      type="number"
+      min="1"
+      max={item.stock.quantity}
+      className="w-12 text-center font-bold text-white text-sm bg-slate-950 border border-slate-800 rounded focus:outline-none focus:ring-1 focus:ring-indigo-500 py-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+      value={inputValue}
+      onChange={handleChange}
+      onBlur={handleBlur}
+      onKeyDown={handleKeyDown}
+    />
+  );
+};
 
 export const BillingTerminalTab: React.FC = () => {
   const {
@@ -330,7 +390,11 @@ export const BillingTerminalTab: React.FC = () => {
                         >
                           -
                         </button>
-                        <span className="w-10 text-center font-bold text-white text-sm">{item.quantity}</span>
+                        <CartQuantityInput
+                          item={item}
+                          updateQuantity={updateQuantity}
+                          addToast={addToast}
+                        />
                         <button 
                           onClick={() => updateQuantity(item._id, item.quantity + 1)}
                           className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-850 rounded transition"

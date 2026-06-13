@@ -10,6 +10,7 @@ import { InventoryCatalogTab } from './billing/InventoryCatalogTab';
 import { CreditBookTab } from './billing/CreditBookTab';
 import { Gstr1TaxTab } from './billing/Gstr1TaxTab';
 import LowStockAlertModal from './billing/modals/LowStockAlertModal';
+import { PwaInstallBanner } from './billing/modals/PwaInstallBanner';
 
 export default function Billing() {
   const {
@@ -122,6 +123,9 @@ export default function Billing() {
 
       {/* 4. DEDICATED LOW STOCK WARNING MODAL OVERLAY */}
       <LowStockAlertModal />
+
+      {/* 5. PWA INSTALLATION BANNER FOR BROWSER USER */}
+      <PwaInstallBanner />
 
     </div>
   );

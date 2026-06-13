@@ -111,8 +111,17 @@ export const useStore = create<EasyACCState>((set, get) => ({
     const { cart, addToast } = get();
     const existing = cart.find(item => item._id === product._id);
     if (existing) {
-      get().updateQuantity(product._id, existing.quantity + 1);
+      const targetQty = existing.quantity + 1;
+      if (targetQty > product.stock.quantity) {
+        addToast(`Cannot add more. Only ${product.stock.quantity} units available in stock. (স্টক এ শুধুমাত্র ${product.stock.quantity} টি পণ্য আছে।)`, 'error');
+        return;
+      }
+      get().updateQuantity(product._id, targetQty);
     } else {
+      if (product.stock.quantity < 1) {
+        addToast(`Out of stock! ${product.name} cannot be added. (স্টক এ নেই!)`, 'error');
+        return;
+      }
       set({ cart: [...cart, { ...product, quantity: 1 }] });
       addToast(`Added ${product.name} to cart`, 'info');
     }
@@ -132,8 +141,17 @@ export const useStore = create<EasyACCState>((set, get) => ({
       get().removeFromCart(productId);
       return;
     }
+    const { cart, addToast } = get();
+    const item = cart.find(i => i._id === productId);
+    if (!item) return;
+
+    if (quantity > item.stock.quantity) {
+      addToast(`Cannot exceed available stock of ${item.stock.quantity} units. (স্টক এ শুধুমাত্র ${item.stock.quantity} টি পণ্য আছে।)`, 'error');
+      quantity = item.stock.quantity;
+    }
+
     set({
-      cart: get().cart.map(item =>
+      cart: cart.map(item =>
         item._id === productId ? { ...item, quantity } : item
       )
     });
@@ -249,7 +267,12 @@ export const useStore = create<EasyACCState>((set, get) => ({
     // 3. Trigger receipt printing via Electron contextBridge
     const win = window as any;
     if (win.electronAPI) {
-      await win.electronAPI.printReceipt(invoiceDoc);
+      try {
+        await win.electronAPI.printReceipt(invoiceDoc);
+      } catch (e) {
+        console.error("Local printer failed:", e);
+        addToast("Local printing failed or was cancelled.", "error");
+      }
     }
 
     // Clear state

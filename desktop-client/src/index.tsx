@@ -18,3 +18,13 @@ if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
       .catch(err => console.error('❌ PWA Service Worker registration failed:', err));
   });
 }
+
+// Intercept PWA installation banner in browser only
+const isElectron = !!(window as any).electronAPI || navigator.userAgent.toLowerCase().includes('electron');
+if (!isElectron) {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    (window as any).deferredPrompt = e;
+    window.dispatchEvent(new Event('pwa-can-install'));
+  });
+}
