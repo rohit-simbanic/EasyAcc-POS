@@ -24,9 +24,19 @@ interface EasyACCState {
   paginatedInvoices: Invoice[];
   productsTotalCount: number;
   invoicesTotalCount: number;
+
+  // Low Stock Alert States
+  lowStockModal: {
+    isOpen: boolean;
+    title: string;
+    products: { name: string; sku: string; quantity: number }[];
+  };
   
   // Actions
   setDb: (db: EasyACCDatabase) => void;
+  setLowStockModal: (isOpen: boolean, title: string, products: { name: string; sku: string; quantity: number }[]) => void;
+  checkDailyLowStockAlerts: () => Promise<void>;
+  checkImmediateLowStockAlert: (productIdsToCheck: string[]) => Promise<void>;
   setOnline: (online: boolean) => void;
   fetchCatalog: () => Promise<void>;
   fetchProductsPage: (page: number, limit: number, search: string) => Promise<void>;
@@ -62,6 +72,12 @@ export const useStore = create<EasyACCState>((set, get) => ({
   paginatedInvoices: [],
   productsTotalCount: 0,
   invoicesTotalCount: 0,
+
+  lowStockModal: {
+    isOpen: false,
+    title: '',
+    products: []
+  },
 
   setDb: (db) => {
     set({ db });
@@ -244,6 +260,10 @@ export const useStore = create<EasyACCState>((set, get) => ({
     // Sync
     triggerSync(db);
 
+    // Trigger immediate stock alert checks for the purchased items
+    const cartProductIds = cart.map(item => item._id);
+    get().checkImmediateLowStockAlert(cartProductIds);
+
     return invoiceDoc;
   },
 
@@ -339,5 +359,92 @@ export const useStore = create<EasyACCState>((set, get) => ({
       paginatedInvoices: invoicesDoc.map((d: any) => d.toJSON() as Invoice),
       invoicesTotalCount: allMatching.length
     });
+  },
+
+  setLowStockModal: (isOpen, title, products) => {
+    set({ lowStockModal: { isOpen, title, products } });
+  },
+
+  checkDailyLowStockAlerts: async () => {
+    const { db, setLowStockModal } = get();
+    if (!db) return;
+
+    const today = new Date().toISOString().split('T')[0];
+    const now = new Date();
+    const currentHour = now.getHours();
+
+    if (currentHour >= 10) {
+      const lastAlertDate = localStorage.getItem('easyacc_last_daily_alert_date') || '';
+      if (lastAlertDate === today) {
+        return;
+      }
+
+      const allProductsDocs = await db.products.find().exec();
+      const lowStockProducts = allProductsDocs
+        .map((doc: any) => doc.toJSON() as Product)
+        .filter(p => p.stock.quantity < 10)
+        .map(p => ({
+          name: p.name,
+          sku: p.sku,
+          quantity: p.stock.quantity
+        }));
+
+      if (lowStockProducts.length > 0) {
+        setLowStockModal(true, 'Daily Low Stock Report (দৈনিক কম স্টক রিপোর্ট)', lowStockProducts);
+        localStorage.setItem('easyacc_last_daily_alert_date', today);
+      }
+    } else {
+      const targetTime = new Date();
+      targetTime.setHours(10, 0, 0, 0);
+      const delayMs = targetTime.getTime() - now.getTime();
+
+      setTimeout(() => {
+        get().checkDailyLowStockAlerts();
+      }, delayMs);
+    }
+  },
+
+  checkImmediateLowStockAlert: async (productIdsToCheck) => {
+    const { db, setLowStockModal } = get();
+    if (!db || productIdsToCheck.length === 0) return;
+
+    let immediateAlertedIds: string[] = [];
+    try {
+      const stored = localStorage.getItem('easyacc_immediate_alerted_ids');
+      if (stored) {
+        immediateAlertedIds = JSON.parse(stored);
+      }
+    } catch (e) {
+      console.error('Error parsing easyacc_immediate_alerted_ids:', e);
+    }
+
+    const newlyLowStock: { name: string; sku: string; quantity: number }[] = [];
+
+    for (const id of productIdsToCheck) {
+      const prodDoc = await db.products.findOne({ selector: { _id: id } }).exec();
+      if (prodDoc) {
+        const prodObj = prodDoc.toJSON() as Product;
+        const currentQty = prodObj.stock.quantity;
+
+        if (currentQty < 10) {
+          if (!immediateAlertedIds.includes(id)) {
+            newlyLowStock.push({
+              name: prodObj.name,
+              sku: prodObj.sku,
+              quantity: currentQty
+            });
+            immediateAlertedIds.push(id);
+          }
+        } else {
+          immediateAlertedIds = immediateAlertedIds.filter(item => item !== id);
+        }
+      }
+    }
+
+    localStorage.setItem('easyacc_immediate_alerted_ids', JSON.stringify(immediateAlertedIds));
+
+    if (newlyLowStock.length > 0) {
+      setLowStockModal(true, 'Immediate Low Stock Warning (তাৎক্ষণিক স্টক অ্যালার্ট)', newlyLowStock);
+    }
   }
 }));

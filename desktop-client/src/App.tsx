@@ -18,6 +18,9 @@ export default function App() {
         // Save database instance to Zustand store
         setDb(database);
 
+        // Run daily low-stock alert checks
+        useStore.getState().checkDailyLowStockAlerts();
+
         // Initialize real-time synchronization manager
         initSyncManager(database);
 

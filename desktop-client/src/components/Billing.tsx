@@ -9,6 +9,7 @@ import { InvoicesArchiveTab } from './billing/InvoicesArchiveTab';
 import { InventoryCatalogTab } from './billing/InventoryCatalogTab';
 import { CreditBookTab } from './billing/CreditBookTab';
 import { Gstr1TaxTab } from './billing/Gstr1TaxTab';
+import LowStockAlertModal from './billing/modals/LowStockAlertModal';
 
 export default function Billing() {
   const {
@@ -118,6 +119,9 @@ export default function Billing() {
           </div>
         ))}
       </div>
+
+      {/* 4. DEDICATED LOW STOCK WARNING MODAL OVERLAY */}
+      <LowStockAlertModal />
 
     </div>
   );
